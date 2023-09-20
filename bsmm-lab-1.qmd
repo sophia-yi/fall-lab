@@ -98,13 +98,44 @@ cat("Seasons worse than expected:", worse_than_expected, "\n")
 
 ...
 
+```{r}
+dplyr::arrange(mets_ben, desc(WPct))
+
+```
+
 ### Exercise 7
 
 ...
 
+```{r}
+mets_ben %>% 
+  dplyr::mutate(Diff = WPct - W_hat) |>
+  dplyr::arrange(desc(Diff))
+```
+
 ### Exercise 8
 
 ...
+
+```{r}
+mets_ben |>
+  dplyr::summarize(
+    num_years = nrow(mets_ben), 
+    total_W = sum(W), 
+    total_L = sum(L), 
+    total_WPct = mean(WPct), 
+    sum_resid = sum(WPct - W_hat)
+  )
+```
+
+```{r}
+total_wins <- sum(mets_ben$W)
+total_losses <- sum(mets_ben$L)
+overall_winning_percentage <- total_wins / (total_wins + total_losses)
+
+cat("In these nine years, the Mets had a combined record of", total_wins, "wins and", total_losses, "losses, for an overall winning percentage of", overall_winning_percentage)
+
+```
 
 ### Exercise 9
 
