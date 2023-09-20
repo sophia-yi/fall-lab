@@ -141,9 +141,70 @@ cat("In these nine years, the Mets had a combined record of", total_wins, "wins 
 
 ...
 
+```{r}
+library(ggplot2)
+ls()
+```
+
+```{r}
+ggplot(data =Ikea, aes(x = width, y = Price)) +
+  geom_point() + 
+  labs(
+    x = "Width (in cm)", 
+    y = "Price (in USD)", 
+    title = "Relationship between Ikea Furniture Width and Price"
+    )
+
+```
+
 ### Exercise 10
 
 ...
+
+```{r}
+mets_ben <- mets_ben |>
+  dplyr::mutate(
+    gm = dplyr::case_when(
+      yearID == 2004 ~ "Jim Duquette", 
+      yearID >= 2005 & yearID <= 2010 ~ "Omar Minaya",
+      yearID >= 2011 & yearID <= 2012 ~ "Sandy Alderson", 
+      TRUE ~ "Other"
+    )
+  )
+
+```
+
+```{r}
+mets_ben <- mets_ben %>% 
+  dplyr::mutate(
+    gm = ifelse(
+      yearID == 2004, "Jim Duquette", 
+      ifelse(
+        yearID >= 2005 & yearID <= 2010, "Omar Minaya",
+      ifelse(
+        yearID >= 2011 & yearID <= 2012, "Sandy Alderson", 
+        "Other"
+      )
+     )
+    )
+  )
+```
+
+### Exercise 11
+
+```{r}
+
+mets_ben_grouped <- mets_ben %>%
+  group_by(gm) %>%
+  summarize(
+    num_years = n(),
+    total_W = sum(W),
+    total_L = sum(L),
+    total_WPct = mean(WPct),
+    sum_resid = sum(WPct - W_hat)
+  )
+print(mets_ben_grouped)
+```
 
 Lab 1
 
