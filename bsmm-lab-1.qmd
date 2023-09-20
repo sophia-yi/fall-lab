@@ -85,6 +85,15 @@ mets_ben
 
 ...
 
+```{r}
+mets_ben <- mets_ben |>
+  dplyr::mutate(Difference = W - W_hat)
+better_than_expected <- sum(mets_ben$Difference > 0)
+worse_than_expected <- sum(mets_ben$Difference < 0)
+cat("Seasons better than expected:", better_than_expected, "\n")
+cat("Seasons worse than expected:", worse_than_expected, "\n")
+```
+
 ### Exercise 6
 
 ...
