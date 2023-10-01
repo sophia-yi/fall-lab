@@ -42,8 +42,13 @@ mets <- Teams  |>
 my_mets <- mets |>
   dplyr::filter(yearID %in% 2004:2012)
 my_mets |> 
-  dplyr::select(yearID,G,W,L)
-my_mets
+  dplyr::select(teamID,yearID,W,L)
+my_mets %>%
+  dplyr::select(teamID,yearID,W,L) %>%
+  dplyr::summarise(
+    "2004-2012 wins"=sum(W)
+    , "2004-2012 losses"=sum(L)
+  )
 ```
 
 ### Exercise 3
@@ -86,12 +91,24 @@ mets_ben
 ...
 
 ```{r}
-mets_ben <- mets_ben |>
-  dplyr::mutate(Difference = W - W_hat)
-better_than_expected <- sum(mets_ben$Difference > 0)
-worse_than_expected <- sum(mets_ben$Difference < 0)
-cat("Seasons better than expected:", better_than_expected, "\n")
-cat("Seasons worse than expected:", worse_than_expected, "\n")
+mets_ben %>%
+  dplyr::summarise('better than expected'= sum(W>=W_hat)
+                   , 'worse than expected'= sum(W<=W_hat)
+  )
+```
+
+```{r}
+Teams |>
+  dplyr:: select(teamID, yearID,W,L,RS=R,RA) |>
+  dplyr:: filter(teamID=="NYN") |>
+  dplyr:: mutate(
+    WPct = 1 / (1+(RA+RS)^2)
+    , W_hat = WPct*(W+L)
+  ) |>
+  dplyr:: summarise(
+    "better than expected"= sum(W>=W_hat)
+    , "worse than expected"= sum(W<=W_hat)
+  )
 ```
 
 ### Exercise 6
@@ -99,7 +116,7 @@ cat("Seasons worse than expected:", worse_than_expected, "\n")
 ...
 
 ```{r}
-dplyr::arrange(mets_ben, desc(WPct))
+mets_ben |> dplyr::arrange(desc(W))
 
 ```
 
@@ -109,7 +126,7 @@ dplyr::arrange(mets_ben, desc(WPct))
 
 ```{r}
 mets_ben %>% 
-  dplyr::mutate(Diff = WPct - W_hat) |>
+  dplyr::mutate(Diff = W - W_hat) |>
   dplyr::arrange(desc(Diff))
 ```
 
@@ -141,20 +158,10 @@ cat("In these nine years, the Mets had a combined record of", total_wins, "wins 
 
 ...
 
-```{r}
-library(ggplot2)
-ls()
+```         
 ```
 
-```{r}
-ggplot(data =Ikea, aes(x = width, y = Price)) +
-  geom_point() + 
-  labs(
-    x = "Width (in cm)", 
-    y = "Price (in USD)", 
-    title = "Relationship between Ikea Furniture Width and Price"
-    )
-
+```         
 ```
 
 ### Exercise 10
@@ -162,32 +169,17 @@ ggplot(data =Ikea, aes(x = width, y = Price)) +
 ...
 
 ```{r}
-mets_ben <- mets_ben |>
-  dplyr::mutate(
-    gm = dplyr::case_when(
-      yearID == 2004 ~ "Jim Duquette", 
-      yearID >= 2005 & yearID <= 2010 ~ "Omar Minaya",
-      yearID >= 2011 & yearID <= 2012 ~ "Sandy Alderson", 
-      TRUE ~ "Other"
-    )
-  )
-
-```
-
-```{r}
-mets_ben <- mets_ben %>% 
+mets_ben  |>
   dplyr::mutate(
     gm = ifelse(
-      yearID == 2004, "Jim Duquette", 
+      yearID==2004,
+      'Jim',
       ifelse(
-        yearID >= 2005 & yearID <= 2010, "Omar Minaya",
-      ifelse(
-        yearID >= 2011 & yearID <= 2012, "Sandy Alderson", 
-        "Other"
+        yearID>=2011,
+        'Sandy',
+        'Omar')
       )
-     )
     )
-  )
 ```
 
 ### Exercise 11
