@@ -185,6 +185,27 @@ mets_ben  |>
 ### Exercise 11
 
 ```{r}
+library(dplyr)
+library(gt)
+library(gtExtras)
+
+mets_ben %>%
+  group_by(gm) %>%
+  summarise(
+    num_years = n(),
+    total_W = sum(W, na.rm = TRUE),
+    total_L = sum(L, na.rm = TRUE),
+    total_WPct = total_W / (total_W + total_L)
+  ) %>%
+  gt() %>%
+  gt_theme_espn()
+
+```
+
+```         
+```
+
+```{r}
 
 mets_ben_grouped <- mets_ben %>%
   group_by(gm) %>%
